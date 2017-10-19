@@ -186,6 +186,10 @@ module LeanplumApi
       production_connection.get(action: 'getVars', userId: user_id).body['response'].first['vars']
     end
 
+    def get_unsubscribe_categories
+      content_read_only_connection.get(action: 'getUnsubscribeCategories').body['response'].first['categories']
+    end
+
     def delete_user(user_id)
       development_connection.get(action: 'deleteUser', userId: user_id).body['response'].first['vars']
     end
@@ -265,13 +269,23 @@ module LeanplumApi
       attr_hash
     end
 
+    def extract_user_attributes!(hash)
+      extracted_attributes = [ :devices, :unsubscribeCategoriesToAdd,
+        :unsubscribeCategoriesToRemove, :unsubscribeChannelsToAdd,
+        :unsubscribeChannelsToRemove ]
+
+      attributes.each do |attr|
+        hash[attr] = hash.delete(attr) if hash.has_key?(attr)
+      end
+    end
+
     # build a user attributes hash
     # @param [Hash] user_hash user attributes to set into LP user
     def build_user_attributes_hash(user_hash)
       user_hash = fix_iso8601(user_hash)
       user_attr_hash = extract_user_id_or_device_id_hash!(user_hash)
+      user_attr_hash = extract_user_attributes!(user_hash)
       user_attr_hash[:action] = 'setUserAttributes'
-      user_attr_hash[:devices] = user_hash.delete(:devices) if user_hash.has_key?(:devices)
       user_attr_hash[:userAttributes] = user_hash
       user_attr_hash
     end
