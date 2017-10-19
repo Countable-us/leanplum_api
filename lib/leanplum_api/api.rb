@@ -190,9 +190,11 @@ module LeanplumApi
       user_id ? { userId: user_id } : { deviceId: device_id }
     end
 
-    # pull defined attributes from hash and put into new hash
-    def extract_user_hash_attributes!(user_hash)
-      user_attr_hash = extract_user_id_or_device_id_hash!(user_hash)
+    # pull defined attributes from user data and put into LP specific attributes hash
+    # @param [Hash] user_data user data hash to built LP specific attributes hash
+    # @return [Hash]
+    def extract_user_hash_attributes!(user_data)
+      user_attr_hash = extract_user_id_or_device_id_hash!(user_data)
 
       [ :devices,
         :unsubscribeCategoriesToAdd,
@@ -200,31 +202,32 @@ module LeanplumApi
         :unsubscribeChannelsToAdd,
         :unsubscribeChannelsToRemove
       ].each do |attr|
-        user_attr_hash[attr] = user_hash.delete(attr) if user_hash.has_key?(attr)
+        user_attr_hash[attr] = user_data.delete(attr) if user_data.has_key?(attr)
       end
 
       user_attr_hash
     end
 
-    # build a user attributes hash
-    # @param [Hash] user_hash user attributes to set into LP user
-    def build_user_attributes_hash(user_hash)
-      user_attr_hash = extract_user_hash_attributes!(user_hash)
+    # build a user attributes hash from user data
+    # @param [Hash] user_data user data hash to built LP specific attributes hash
+    # @return [Hash]
+    def build_user_attributes_hash(user_data)
+      user_attr_hash = extract_user_hash_attributes!(user_data)
       user_attr_hash[:action] = SET_USER_ATTRIBUTES
 
-      if user_hash.key?(:events)
-        user_attr_hash[:events] = user_hash.delete(:events)
+      if user_data.key?(:events)
+        user_attr_hash[:events] = user_data.delete(:events)
         user_attr_hash[:events].each { |k, v| user_attr_hash[:events][k] = fix_seconds_since_epoch(v) }
       end
 
-      user_attr_hash[:userAttributes] = fix_iso8601(user_hash)
+      user_attr_hash[:userAttributes] = fix_iso8601(user_data)
       user_attr_hash
     end
 
     # build a user attributes hash
-    # @param [Hash] device_hash device attributes to set into LP device
-    def build_device_attributes_hash(device_hash)
-      device_hash = fix_iso8601(device_hash)
+    # @param [Hash] device_data device attributes to set into LP device
+    def build_device_attributes_hash(device_data)
+      device_hash = fix_iso8601(device_data)
       extract_user_id_or_device_id_hash!(device_hash).merge(
         action: SET_DEVICE_ATTRIBUTES,
         deviceAttributes: device_hash
