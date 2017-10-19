@@ -85,12 +85,16 @@ module LeanplumApi
       content_read_only_connection.get(action: 'getNewsfeedMessages', deviceId: device_id).first['newsfeedMessages']
     end
 
-    def get_vars(user_id)
-      production_connection.get(action: 'getVars', userId: user_id).first['vars']
+    def get_unsubscribe_categories
+      content_read_only_connection.get(action: 'getUnsubscribeCategories').body['response'].first['categories']
     end
 
     def delete_user(user_id)
       development_connection.get(action: 'deleteUser', userId: user_id).first['vars']
+    end
+
+    def get_vars(user_id)
+      production_connection.get(action: 'getVars', userId: user_id).first['vars']
     end
 
     # POSTs to Leanplum's sendMessage API endpoint
@@ -176,20 +180,37 @@ module LeanplumApi
     end
 
     # Deletes the user_id and device_id key/value pairs from the hash parameter.
-    def extract_user_id_or_device_id_hash!(hash)
-      user_id = hash.delete(:user_id) || hash.delete(:userId)
-      device_id = hash.delete(:device_id) || hash.delete(:deviceId)
-      fail "No device_id or user_id in hash #{hash}" unless user_id || device_id
+    # @param [Hash] user_hash
+    # @return [Hash]
+    def extract_user_id_or_device_id_hash!(user_hash)
+      user_id = user_hash.delete(:user_id) || user_hash.delete(:userId)
+      device_id = user_hash.delete(:device_id) || user_hash.delete(:deviceId)
+      fail "No device_id or user_id in hash #{user_hash}" unless user_id || device_id
 
       user_id ? { userId: user_id } : { deviceId: device_id }
+    end
+
+    # pull defined attributes from hash and put into new hash
+    def extract_user_hash_attributes!(user_hash)
+      user_attr_hash = extract_user_id_or_device_id_hash!(user_hash)
+
+      [ :devices,
+        :unsubscribeCategoriesToAdd,
+        :unsubscribeCategoriesToRemove,
+        :unsubscribeChannelsToAdd,
+        :unsubscribeChannelsToRemove
+      ].each do |attr|
+        user_attr_hash[attr] = user_hash.delete(attr) if user_hash.has_key?(attr)
+      end
+
+      user_attr_hash
     end
 
     # build a user attributes hash
     # @param [Hash] user_hash user attributes to set into LP user
     def build_user_attributes_hash(user_hash)
-      user_attr_hash = extract_user_id_or_device_id_hash!(user_hash)
+      user_attr_hash = extract_user_hash_attributes!(user_hash)
       user_attr_hash[:action] = SET_USER_ATTRIBUTES
-      user_attr_hash[:devices] = user_hash.delete(:devices) if user_hash.key?(:devices)
 
       if user_hash.key?(:events)
         user_attr_hash[:events] = user_hash.delete(:events)
@@ -197,6 +218,7 @@ module LeanplumApi
       end
 
       user_attr_hash[:userAttributes] = fix_iso8601(user_hash)
+      user_attr_hash[:userAttributes] = user_hash
       user_attr_hash
     end
 
