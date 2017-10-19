@@ -218,7 +218,6 @@ module LeanplumApi
       end
 
       user_attr_hash[:userAttributes] = fix_iso8601(user_hash)
-      user_attr_hash[:userAttributes] = user_hash
       user_attr_hash
     end
 

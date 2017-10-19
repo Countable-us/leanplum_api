@@ -426,6 +426,7 @@ describe LeanplumApi::API do
       context 'anomalous data force_anomalous_override' do
         let(:old_events) { events.map { |e| e[:time] -= 2.years; e } }
 
+        # @NOTE: this spec requires setup of events in LP.
         it 'should successfully force the anomalous data override events' do
           VCR.use_cassette('track_events_anomaly_overrider') do
             expect do
