@@ -30,6 +30,10 @@ module LeanplumApi
     # at the same time, batched together like leanplum recommends.
     # Set the :force_anomalous_override option to catch warnings from leanplum
     # about anomalous events and force them to not be considered anomalous.
+    # @param [Hash|Array] events
+    # @param [Hash|Array] user_attributes
+    # @param [Hash|Array] device_attributes
+    # @param [Hash] options
     def track_multi(events: nil, user_attributes: nil, device_attributes: nil, options: {})
       events = Array.wrap(events)
 
@@ -196,7 +200,7 @@ module LeanplumApi
     def extract_user_hash_attributes!(user_data)
       user_attr_hash = extract_user_id_or_device_id_hash!(user_data)
 
-      [ :devices,
+      [ 
         :unsubscribeCategoriesToAdd,
         :unsubscribeCategoriesToRemove,
         :unsubscribeChannelsToAdd,
@@ -228,10 +232,9 @@ module LeanplumApi
     # @param [Hash] device_data device attributes to set into LP device
     def build_device_attributes_hash(device_data)
       device_hash = fix_iso8601(device_data)
-      extract_user_id_or_device_id_hash!(device_hash).merge(
-        action: SET_DEVICE_ATTRIBUTES,
-        deviceAttributes: device_hash
-      )
+      device_hash[:action] = SET_DEVICE_ATTRIBUTES
+      # device attributes must be at top level
+      extract_user_id_or_device_id_hash!(device_hash).merge(device_hash)
     end
 
     # Events have a :user_id or :device id, a name (:event) and an optional time (:time)
