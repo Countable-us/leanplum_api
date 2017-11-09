@@ -201,6 +201,7 @@ module LeanplumApi
       user_attr_hash = extract_user_id_or_device_id_hash!(user_data)
 
       [ 
+        :devices,
         :unsubscribeCategoriesToAdd,
         :unsubscribeCategoriesToRemove,
         :unsubscribeChannelsToAdd,
@@ -225,6 +226,7 @@ module LeanplumApi
       end
 
       user_attr_hash[:userAttributes] = fix_iso8601(user_data)
+      user_attr_hash[:userAttributes][:devices] = nil   # fixes an old bug where we added devices into userAttributes
       user_attr_hash
     end
 

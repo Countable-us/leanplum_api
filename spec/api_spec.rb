@@ -76,7 +76,7 @@ describe LeanplumApi::API do
         {
           userId: first_user_id,
           action: described_class::SET_USER_ATTRIBUTES,
-          userAttributes: api.send(:fix_iso8601, user.except(:user_id))
+          userAttributes: api.send(:fix_iso8601, user.except(:user_id).merge({devices: nil}))
         }
       end
 
