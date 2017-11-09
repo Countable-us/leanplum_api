@@ -228,10 +228,9 @@ module LeanplumApi
     # @param [Hash] device_data device attributes to set into LP device
     def build_device_attributes_hash(device_data)
       device_hash = fix_iso8601(device_data)
-      extract_user_id_or_device_id_hash!(device_hash).merge(
-        action: SET_DEVICE_ATTRIBUTES,
-        deviceAttributes: device_hash
-      )
+      device_hash[:action] = SET_DEVICE_ATTRIBUTES
+      # device attributes must be at top level
+      extract_user_id_or_device_id_hash!(device_hash).merge(device_hash)
     end
 
     # Events have a :user_id or :device id, a name (:event) and an optional time (:time)
