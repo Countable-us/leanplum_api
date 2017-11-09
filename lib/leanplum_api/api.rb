@@ -200,7 +200,7 @@ module LeanplumApi
     def extract_user_hash_attributes!(user_data)
       user_attr_hash = extract_user_id_or_device_id_hash!(user_data)
 
-      [ :devices,
+      [ 
         :unsubscribeCategoriesToAdd,
         :unsubscribeCategoriesToRemove,
         :unsubscribeChannelsToAdd,

@@ -92,14 +92,6 @@ describe LeanplumApi::API do
         end
       end
 
-      context 'with devices' do
-        it 'builds the right hash' do
-          expect(api.send(:build_user_attributes_hash, user_with_devices)).to eq(
-            built_attributes.merge(devices: devices)
-          )
-        end
-      end
-
       context 'with unsubscribe categories' do
         it 'builds the right hash' do
           expect(api.send(:build_user_attributes_hash, user_with_unsubscribe_categories)).to eq(built_attributes.merge(unsubscribe_categories))
@@ -119,18 +111,6 @@ describe LeanplumApi::API do
         it 'should successfully set user attributes and events' do
           VCR.use_cassette('set_user_attributes_with_events') do
             expect { api.set_user_attributes([user_with_events]) }.to_not raise_error
-          end
-        end
-
-        it 'should successfully set user attributes and devices' do
-          VCR.use_cassette('set_user_attributes_with_devices') do
-            expect { api.set_user_attributes([user_with_devices]) }.to_not raise_error
-          end
-        end
-
-        it 'should successfully set user attributes and devices and events' do
-          VCR.use_cassette('set_user_attributes_with_devices_and_events') do
-            expect { api.set_user_attributes([user_with_devices.merge(events: events)]) }.to_not raise_error
           end
         end
       end
@@ -181,17 +161,6 @@ describe LeanplumApi::API do
   end
 
   context 'messages' do
-    # let(:device) {
-    #   VCR.use_cassette('set_device_attributes_device') do
-    #     api.set_device_attributes(devices)
-    #   end
-    # }
-    #
-    # let(:user) {
-    #   VCR.use_cassette('set_user_attributes_users') do
-    #     api.set_user_attributes(users)
-    #   end
-    # }
 
     let(:spock) {
       VCR.use_cassette('spock') do
@@ -266,9 +235,9 @@ describe LeanplumApi::API do
         expect(response['error']).to be_blank
       end
 
-      it "receives the expected error when message_id does not exist" do
+      it 'receives the expected error when message_id does not exist' do
         response = VCR.use_cassette('send_message_with_invalid_message_id') do
-          api.send_message(message_id: "thisisaninvalidmessageid", user_id: user_id)
+          api.send_message(message_id: 'thisisaninvalidmessageid', user_id: user_id)
         end
         expect(response.size).to eq 1
         response = response.first
@@ -278,7 +247,7 @@ describe LeanplumApi::API do
         expect(response['error']).to be_blank
       end
 
-      it "receives the expected error when user_id is passed in but does not exist" do
+      it 'receives the expected error when user_id is passed in but does not exist' do
         response = VCR.use_cassette('send_message_with_invalid_user_id') do
           api.send_message(message_id: message_id, user_id: "thisisaninvaliduserid")
         end
