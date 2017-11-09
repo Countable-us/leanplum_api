@@ -30,6 +30,10 @@ module LeanplumApi
     # at the same time, batched together like leanplum recommends.
     # Set the :force_anomalous_override option to catch warnings from leanplum
     # about anomalous events and force them to not be considered anomalous.
+    # @param [Hash|Array] events
+    # @param [Hash|Array] user_attributes
+    # @param [Hash|Array] device_attributes
+    # @param [Hash] options
     def track_multi(events: nil, user_attributes: nil, device_attributes: nil, options: {})
       events = Array.wrap(events)
 
