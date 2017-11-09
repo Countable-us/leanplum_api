@@ -32,11 +32,10 @@ describe LeanplumApi::API do
 
   context 'devices' do
     it 'build_device_attributes_hash' do
-      expect(api.send(:build_device_attributes_hash, device)).to eq(
+      device_hash = api.send(:fix_iso8601, device.except(:deviceId))
+      expect(api.send(:build_device_attributes_hash, device)).to eq({
         deviceId: device[:deviceId],
-        action: described_class::SET_DEVICE_ATTRIBUTES,
-        deviceAttributes: api.send(:fix_iso8601, device.except(:deviceId))
-      )
+        action: described_class::SET_DEVICE_ATTRIBUTES}.merge(device_hash))
     end
 
     context 'set_device_attributes' do

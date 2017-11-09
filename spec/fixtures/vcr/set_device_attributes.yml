@@ -5,7 +5,7 @@ http_interactions:
     uri: https://www.leanplum.com/api?action=multi&apiVersion=1.0.6&appId=<LEANPLUM_APP_ID>&clientKey=<LEANPLUM_PRODUCTION_KEY>&devMode=false&time=1507792150
     body:
       encoding: UTF-8
-      string: '{"data":[{"deviceId":"fu123","action":"setDeviceAttributes","deviceAttributes":{"appVersion":"x42x","deviceModel":"p0d","create_date":"2018-01-01"}}]}'
+      string: '{"data":[{"deviceId":"fu123","appVersion":"x42x","deviceModel":"p0d","create_date":"2018-01-01","action":"setDeviceAttributes"}]}'
     headers:
       User-Agent:
       - Faraday v0.13.1
@@ -25,23 +25,23 @@ http_interactions:
       Content-Type:
       - application/json;charset=utf-8
       X-Cloud-Trace-Context:
-      - 660fed773d012b69db826c70cc1f9eec
+      - 0a4e6f70bf71d2b6378e7d93fe865aaa
       Set-Cookie:
-      - GOOGAPPUID=xCgsIAxDzBCCK9qPPBQ; expires=Tue, 08-Dec-2020 15:20:42 GMT; path=/
+      - GOOGAPPUID=xCgsIBBCWAiC9rY7QBQ; expires=Mon, 28-Dec-2020 19:43:57 GMT; path=/
       Date:
-      - Thu, 19 Oct 2017 19:20:42 GMT
+      - Wed, 08 Nov 2017 23:43:57 GMT
       Server:
       - Google Frontend
       Content-Length:
-      - '120'
+      - '121'
       Expires:
-      - Thu, 19 Oct 2017 19:20:42 GMT
+      - Wed, 08 Nov 2017 23:43:57 GMT
       Cache-Control:
       - private
     body:
       encoding: UTF-8
       string: '{"response":[{"success":true,"warning":{"message":"Device clock skew
-        detected (7 days behind). Rewriting timestamp."}}]}'
+        detected (27 days behind). Rewriting timestamp."}}]}'
     http_version: 
   recorded_at: Thu, 12 Oct 2017 07:09:10 GMT
 recorded_with: VCR 3.0.3
